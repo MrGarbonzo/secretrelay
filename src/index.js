@@ -17,7 +17,7 @@ const network = process.env.NETWORK || 'base-sepolia';
 const chainId = network === 'base' ? 'eip155:8453' : 'eip155:84532';
 
 const facilitator = new HTTPFacilitatorClient({
-  url: 'https://facilitator.x402.org',
+  url: 'https://x402.org/facilitator',
 });
 const resourceServer = new x402ResourceServer(facilitator)
   .register(chainId, new ExactEvmScheme());
