@@ -48,10 +48,10 @@ const x402 = paymentMiddleware(
   false,     // syncFacilitatorOnStart — we handle init above
 );
 
-// Wrap x402 middleware: catch errors when facilitator is unavailable
-app.use('/proxy', (req, res, next) => {
-  if (!facilitatorReady) {
-    // Facilitator not synced — block all requests with 402
+// x402 middleware must be on app root — it matches routes using req.path,
+// and mounting on '/proxy' would strip the prefix, breaking route matching.
+app.use((req, res, next) => {
+  if (!facilitatorReady && req.path === '/proxy') {
     return res.status(402).json({
       error: 'payment_required',
       detail: 'Payment gateway initializing — try again shortly',
