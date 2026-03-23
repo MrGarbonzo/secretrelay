@@ -50,21 +50,26 @@ const x402 = paymentMiddleware(
 
 // x402 middleware must be on app root — it matches routes using req.path,
 // and mounting on '/proxy' would strip the prefix, breaking route matching.
-app.use((req, res, next) => {
-  if (!facilitatorReady && req.path === '/proxy') {
-    return res.status(402).json({
-      error: 'payment_required',
-      detail: 'Payment gateway initializing — try again shortly',
-    });
-  }
-  Promise.resolve(x402(req, res, next)).catch((err) => {
-    console.warn(`[x402] middleware error: ${err.message}`);
-    res.status(402).json({
-      error: 'payment_required',
-      detail: 'Payment verification failed',
+const paymentDisabled = process.env.DISABLE_PAYMENT === 'true';
+if (paymentDisabled) {
+  console.warn('[x402] PAYMENT DISABLED — all requests pass through without payment');
+} else {
+  app.use((req, res, next) => {
+    if (!facilitatorReady && req.path === '/proxy') {
+      return res.status(402).json({
+        error: 'payment_required',
+        detail: 'Payment gateway initializing — try again shortly',
+      });
+    }
+    Promise.resolve(x402(req, res, next)).catch((err) => {
+      console.warn(`[x402] middleware error: ${err.message}`);
+      res.status(402).json({
+        error: 'payment_required',
+        detail: 'Payment verification failed',
+      });
     });
   });
-});
+}
 
 app.post('/proxy', async (req, res) => {
   const reqId = crypto.randomUUID();
