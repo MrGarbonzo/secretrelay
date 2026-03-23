@@ -8,6 +8,7 @@ import { calculatePrice } from './pricing.js';
 import { validateProxyRequest } from './validation.js';
 import { forwardRequest } from './proxy.js';
 import { getAttestation } from './attestation.js';
+import { getVmStatus, checkSecretVmConnection } from './secretvm.js';
 
 const app = express();
 app.use(express.json({ limit: '1mb' }));
@@ -113,8 +114,34 @@ app.post('/proxy', async (req, res) => {
   }
 });
 
+// SecretVM agent API config
+const secretvmKey = process.env.SECRETVM_AGENT_PRIVATE_KEY;
+const secretvmVmId = process.env.SECRETVM_VM_ID;
+
+// Check SecretVM connectivity on startup
+let secretvmConnected = false;
+if (secretvmKey) {
+  checkSecretVmConnection(secretvmKey)
+    .then((ok) => { secretvmConnected = ok; console.log(`[secretvm] agent API ${ok ? 'connected' : 'unreachable'}`); })
+    .catch(() => { console.warn('[secretvm] agent API check failed'); });
+}
+
 // Health check
-app.get('/health', (_req, res) => res.json({ ok: true, facilitatorReady }));
+app.get('/health', (_req, res) => res.json({ ok: true, facilitatorReady, secretvmConnected }));
+
+// VM status endpoint
+app.get('/vm-status', async (_req, res) => {
+  if (!secretvmKey || !secretvmVmId) {
+    return res.status(503).json({ error: 'secretvm_not_configured', detail: 'SECRETVM_AGENT_PRIVATE_KEY and SECRETVM_VM_ID required' });
+  }
+  try {
+    const status = await getVmStatus(secretvmKey, secretvmVmId);
+    return res.json(status);
+  } catch (err) {
+    const detail = err.response?.status === 404 ? 'VM not found or not owned by this agent' : err.message;
+    return res.status(502).json({ error: 'secretvm_error', detail });
+  }
+});
 
 const PORT = process.env.PORT || 3000;
 const HOST = process.env.HOST || '0.0.0.0';

@@ -104,6 +104,19 @@ Examples:
 - GET with attestation: **$0.003**
 - POST with 15kb body + attestation: **$0.005**
 
+## SecretVM Agent Ecosystem
+
+SecretRelay participates in the SecretVM agentic ecosystem via the [SecretVM Agent API](https://docs.scrt.network/secret-network-documentation/secretvm-confidential-virtual-machines/agentic-support/secretvm-rest-api-for-agents-x402). When configured with an agent private key, SecretRelay can authenticate with the SecretVM platform to report its own VM status and verify connectivity.
+
+Set `SECRETVM_AGENT_PRIVATE_KEY` and `SECRETVM_VM_ID` in your `.env` to enable:
+
+- `GET /health` includes `secretvmConnected: true/false`
+- `GET /vm-status` returns this VM's status from the SecretVM dashboard
+
+```bash
+curl -s https://your-vm.vm.scrtlabs.com:3000/vm-status
+```
+
 ## Deployment
 
 SecretRelay must run inside a SecretVM (Intel SGX/TDX) for the privacy guarantee to hold. When running outside a TEE (e.g., local development), the attestation endpoint will be unreachable and a mock attestation object is returned instead. In this mode, SecretRelay functions as a standard proxy without enclave-backed privacy guarantees.
