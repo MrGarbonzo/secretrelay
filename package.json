@@ -1,0 +1,18 @@
+{
+  "name": "sealproxy",
+  "version": "1.0.0",
+  "description": "Private API proxy running inside a SecretVM TEE with x402 payment gating",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node test/test-pricing.js"
+  },
+  "dependencies": {
+    "express": "^4.18.0",
+    "axios": "^1.6.0",
+    "@x402/express": "^2.7.0",
+    "@x402/evm": "^2.7.0",
+    "dotenv": "^16.0.0"
+  }
+}
