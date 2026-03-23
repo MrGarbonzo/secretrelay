@@ -1,0 +1,13 @@
+services:
+  secretrelay:
+    image: ghcr.io/mrgarbonzo/secretrelay:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - PAYMENT_ADDRESS=0x6556b72490a59D81df06393E58C64A3dc8920912
+      - NETWORK=base-sepolia
+      - PORT=3000
+      - HOST=0.0.0.0
+      - ATTESTATION_ENDPOINT=http://172.17.0.1:8080/attestation
+      - ALLOWED_DOMAINS=
+    restart: unless-stopped

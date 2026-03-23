@@ -1,6 +1,6 @@
-# SealProxy
+# SecretRelay
 
-SealProxy is a pay-per-request private API proxy that runs inside a SecretVM Trusted Execution Environment (TEE). Agents submit an HTTP request payload and the enclave forwards it to the target, returning the response along with an optional attestation proving the request was handled inside a secure enclave. Payment is gated via the x402 protocol using USDC on Base.
+SecretRelay is a pay-per-request private API proxy that runs inside a SecretVM Trusted Execution Environment (TEE). Agents submit an HTTP request payload and the enclave forwards it to the target, returning the response along with an optional attestation proving the request was handled inside a secure enclave. Payment is gated via the x402 protocol using USDC on Base.
 
 ## Privacy Guarantee
 
@@ -78,7 +78,7 @@ import { withPayment } from '@x402/axios'; // or use AgentKit
 
 const client = withPayment(axios.create(), walletClient); // handles 402 → pay → retry
 
-const res = await client.post('https://sealproxy.example.com/proxy?attest=true', {
+const res = await client.post('https://secretrelay.example.com/proxy?attest=true', {
   url: 'https://api.openai.com/v1/chat/completions',
   method: 'POST',
   headers: { 'Authorization': 'Bearer sk-...' },
@@ -106,4 +106,4 @@ Examples:
 
 ## Deployment
 
-SealProxy must run inside a SecretVM (Intel SGX/TDX) for the privacy guarantee to hold. When running outside a TEE (e.g., local development), the attestation endpoint will be unreachable and a mock attestation object is returned instead. In this mode, SealProxy functions as a standard proxy without enclave-backed privacy guarantees.
+SecretRelay must run inside a SecretVM (Intel SGX/TDX) for the privacy guarantee to hold. When running outside a TEE (e.g., local development), the attestation endpoint will be unreachable and a mock attestation object is returned instead. In this mode, SecretRelay functions as a standard proxy without enclave-backed privacy guarantees.

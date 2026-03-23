@@ -1,5 +1,5 @@
 {
-  "name": "sealproxy",
+  "name": "secretrelay",
   "version": "1.0.0",
   "description": "Private API proxy running inside a SecretVM TEE with x402 payment gating",
   "type": "module",

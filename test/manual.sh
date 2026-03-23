@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Manual test script for SealProxy
+# Manual test script for SecretRelay
 # Start the server first: npm start
 
 BASE="http://localhost:3000"
@@ -14,7 +14,7 @@ curl -s -w "\nHTTP %{http_code}\n" "$BASE/proxy" \
   -d '{
     "url": "https://httpbin.org/post",
     "method": "POST",
-    "headers": { "X-Test": "sealproxy" },
+    "headers": { "X-Test": "secretrelay" },
     "body": { "hello": "world" }
   }'
 echo
@@ -25,7 +25,7 @@ curl -s -w "\nHTTP %{http_code}\n" "$BASE/proxy?attest=true" \
   -d '{
     "url": "https://httpbin.org/post",
     "method": "POST",
-    "headers": { "X-Test": "sealproxy" },
+    "headers": { "X-Test": "secretrelay" },
     "body": { "hello": "world" }
   }'
 echo
